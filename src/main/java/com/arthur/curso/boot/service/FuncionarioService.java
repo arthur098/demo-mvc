@@ -1,5 +1,6 @@
 package com.arthur.curso.boot.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.arthur.curso.boot.domain.Funcionario;
@@ -15,4 +16,10 @@ public interface FuncionarioService {
 	Funcionario buscarPorId(Long id);
 
 	List<Funcionario> buscarTodos();
+
+	List<Funcionario> buscarPorNome(String nome);
+
+	List<Funcionario> buscarPorCargo(Long id);
+
+	List<Funcionario> buscarPorData(LocalDate entrada, LocalDate saida);
 }
