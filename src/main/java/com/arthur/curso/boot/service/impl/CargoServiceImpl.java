@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.arthur.curso.boot.dao.CargoDao;
 import com.arthur.curso.boot.domain.Cargo;
 import com.arthur.curso.boot.service.CargoService;
+import com.arthur.curso.boot.util.PaginationUtil;
 
 @Service
 public class CargoServiceImpl implements CargoService {
@@ -50,6 +51,16 @@ public class CargoServiceImpl implements CargoService {
 	@Override
 	public boolean cargoTemFuncionario(Long id) {
 		return this.buscarPorId(id).getFuncionarios().size() > 0;
+	}
+
+	@Override
+	public PaginationUtil<Cargo> buscarCargoPaginado(int pagina, int tamanho) {
+		return this.dao.buscaPaginada(pagina, tamanho);
+	}
+
+	@Override
+	public PaginationUtil<Cargo> buscarCargoPaginadoPorNome(int pagina, int tamanho, String nome) {
+		return this.dao.buscaPaginadaPorNome(pagina, nome, tamanho);
 	}
 
 }

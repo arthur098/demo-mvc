@@ -1,6 +1,7 @@
 package com.arthur.curso.boot.web.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -13,12 +14,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.arthur.curso.boot.domain.Cargo;
 import com.arthur.curso.boot.domain.Departamento;
 import com.arthur.curso.boot.service.CargoService;
 import com.arthur.curso.boot.service.DepartamentoService;
+import com.arthur.curso.boot.util.PaginationUtil;
 
 @Controller
 @RequestMapping("/cargos")
@@ -36,8 +39,27 @@ public class CargoController {
 	}
 
 	@GetMapping("/listar")
-	public String listar(ModelMap model) {
-		model.addAttribute("cargos", this.service.buscarTodos());
+	public String listar(@RequestParam("page") Optional<Integer> pagina,
+						 @RequestParam("maxResults") Optional<Integer> maxResults,
+						 @RequestParam("nome") Optional<String> nome,
+						 ModelMap model) {
+		PaginationUtil<Cargo> cargos;
+		int valorPagina = 1;
+		int valorMaxResults = 5;
+		if(pagina.isPresent()) {
+			valorPagina = pagina.get();
+		}
+		
+		if(maxResults.isPresent()) {
+			valorMaxResults = maxResults.get();
+		}
+		if(nome.isPresent() && !nome.get().isEmpty()) {
+			cargos = this.service.buscarCargoPaginadoPorNome(valorPagina, valorMaxResults, nome.get());
+		} else {
+			cargos = this.service.buscarCargoPaginado(valorPagina, valorMaxResults);
+		}
+		
+		model.addAttribute("pageCargo", cargos);
 		return "/cargo/lista";
 	}
 
@@ -76,7 +98,7 @@ public class CargoController {
 			model.addAttribute("success", "Cargo excluído com sucesso.");
 		}
 
-		return this.listar(model);
+		return "redirect:/cargos/listar";
 	}
 
 	@ModelAttribute("departamentos")

@@ -21,34 +21,92 @@
 		</nav>
 
 		<div class="container" id="listagem">
-			<div class="table-responsive">
-				<table class="table table-striped table-hover table-sm">
-					<thead>
-						<tr>
-							<th>#</th>
-							<th>Cargo</th>
-							<th>Departamento</th>
-							<th>Ação</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="c : ${cargos}">
-							<td th:text="${c.id}"></td>
-							<td th:text="${c.nome}"></td>
-							<td th:text="${c.departamento.name}"></td>
-							<td colspan="2">
-								<a class="btn btn-info btn-sm" th:href="@{/cargos/editar/{id} (id=${c.id})}" role="button">
-									<span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
-								</a>
-								<button type="button" class="btn btn-danger btn-sm" th:id="${#strings.concat('btn_cargos/excluir/', c.id)}"
-										data-toggle="modal" data-target="#myModal">
-									<span class="oi oi-circle-x" title="Exclusão desabilitada" aria-hidden="true"></span>
-								</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+		
+		
+		<p>
+			
+				<i class="oi oi-magnifying-glass"></i><span></span>
+				<button class="btn btn-primary" type="button" data-toggle="collapse"
+					data-target="#collapseNome" aria-controls="collapseNome">Nome
+				</button>
+			</p>
+			<form class="form-inline" method="GET" th:action="@{/cargos/listar}">
+				<div class="row">
+					<div class="col">
+						<div class="collapse" id="collapseNome">
+	
+							<nav class="navbar navbar-light bg-light">
+								
+									<input class="form-control mr-sm-2" type="search"
+										placeholder="nome" aria-label="Search" th:name="nome" />
+									<button class="btn btn-outline-success my-2 my-sm-0">Search</button>
+							</nav>
+	
+						</div>
+					</div>
+				</div>
+				
+				<div class="table-responsive">
+					<table class="table table-striped table-hover table-sm">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th th:text="#{tabela.col.cargo}"></th>
+								<th th:text="#{tabela.col.departamento}"></th>
+								<th th:text="#{tabela.col.acao}"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="c : ${pageCargo.list}">
+								<td th:text="${c.id}"></td>
+								<td th:text="${c.nome}"></td>
+								<td th:text="${c.departamento.name}"></td>
+								<td colspan="2">
+									<a class="btn btn-info btn-sm" th:href="@{/cargos/editar/{id} (id=${c.id})}" role="button">
+										<span class="oi oi-brush" title="Editar" aria-hidden="true"></span>
+									</a>
+									<button type="button" class="btn btn-danger btn-sm" th:id="${#strings.concat('btn_cargos/excluir/', c.id)}"
+											data-toggle="modal" data-target="#myModal">
+										<span class="oi oi-circle-x" title="Exclusão desabilitada" aria-hidden="true"></span>
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<nav aria-label="Page navigation example">
+						<ul class="pagination">
+							<li class="page-item" th:classappend="${pageCargo.pagina} == 1 ? 'disabled' : ''">
+								<a class="page-link" th:href="@{/cargos/listar(page=1)}">&laquo;</a>
+							</li>
+							<li class="page-item" th:classappend="${pageCargo.pagina} == 1 ? 'disabled' : ''">
+								<a class="page-link" th:href="@{/cargos/listar(page=${pageCargo.pagina - 1})}">&lt;</a>
+							</li>
+							<li class="page-item" th:if="${pageCargo.pagina} > 1">
+								<a class="page-link" th:href="@{/cargos/listar(page=${pageCargo.pagina - 1})}" th:text="${pageCargo.pagina - 1}"></a>
+							</li>
+							<li class="page-item active">
+								<a class="page-link" href="#" th:text="${pageCargo.pagina}">2</a>
+							</li>
+							<li class="page-item" th:if="(${pageCargo.pagina} == 1 and ${pageCargo.totalPaginas} > 1) or ${pageCargo.totalPaginas} != ${pageCargo.pagina}">
+								<a class="page-link" th:href="@{/cargos/listar(page=${pageCargo.pagina + 1})}" th:text="${pageCargo.pagina + 1}"></a>
+							</li>
+							<li class="page-item" th:classappend="${pageCargo.totalPaginas} == ${pageCargo.pagina} ? 'disabled' : ''">
+								<a class="page-link"  th:href="@{/cargos/listar(page=${pageCargo.pagina + 1})}">&gt;</a>
+							</li>
+							<li class="page-item" th:classappend="${pageCargo.totalPaginas} == ${pageCargo.pagina} ? 'disabled' : ''">
+								<a class="page-link"  th:href="@{/cargos/listar(page=${pageCargo.totalPaginas})}">&raquo;</a>
+							</li>
+						</ul>
+					</nav>
+					
+					<!-- <select th:name="maxResults" th:value="${pageCargo.tamanho}">
+						<option th:value="5" th:text="5"></option>
+						<option th:value="10" th:text="10"></option>
+						<option th:value="15" th:text="15"></option>
+					</select> -->
+				</div>
+			</form>
 		</div>
 
 		<div th:replace="fragments/modal :: modal"></div>

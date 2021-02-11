@@ -10,8 +10,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -29,6 +31,7 @@ public class Funcionario extends AbstractEntity<Long> {
 	@Column(nullable = false, columnDefinition = "DECIMAL(7, 2) DEFAULT 0.00")
 	private BigDecimal salario;
 	
+	@PastOrPresent(message="{PastOrPresent.funcionario.dataEntrada}")
 	@NotNull(message = "Informe a data de entrada do funcionário.")
 	@DateTimeFormat(iso = ISO.DATE)
 	@Column(name = "data_entrada", nullable = false, columnDefinition = "DATE")
@@ -38,10 +41,13 @@ public class Funcionario extends AbstractEntity<Long> {
 	@Column(name = "data_saida", columnDefinition = "DATE")
 	private LocalDate dataSaida;
 	
+	@NotNull
+	@Valid
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "enderecos_pkey")
 	private Endereco endereco;
 	
+	@NotNull(message="{NotNull.funcionario.cargo}")
 	@ManyToOne
 	@JoinColumn(name = "funcionarios_id_cargo_fkey")
 	private Cargo cargo;
